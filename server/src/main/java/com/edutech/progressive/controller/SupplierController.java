@@ -1,41 +1,64 @@
 package com.edutech.progressive.controller;
 
 import com.edutech.progressive.entity.Supplier;
-import org.springframework.http.ResponseEntity;
+import com.edutech.progressive.service.SupplierService;
+import com.edutech.progressive.service.impl.SupplierServiceImplArraylist;
+import com.edutech.progressive.service.impl.SupplierServiceImplJpa;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/supplier")
 public class SupplierController {
 
-    public ResponseEntity<List<Supplier>> getAllSuppliers() {
-        return null;
+    private final SupplierService jpaService = new SupplierServiceImplJpa();
+    private final SupplierService arrayListService = new SupplierServiceImplArraylist();
+
+    // JPA-based endpoints
+
+    @GetMapping
+    public List<Supplier> getAllSuppliers() {
+        return jpaService.getAllSuppliers();
     }
 
-    public ResponseEntity<Supplier> getSupplierById(int supplierId) {
-        return null;
+    @GetMapping("/{supplierId}")
+    public Supplier getSupplierById(@PathVariable int supplierId) {
+        return jpaService.getSupplierById(supplierId);
     }
 
-    public ResponseEntity<Integer> addSupplier(Supplier supplier) {
-        return null;
+    @PostMapping
+    public int addSupplier(@RequestBody Supplier supplier) {
+        return jpaService.addSupplier(supplier);
     }
 
-    public ResponseEntity<Void> updateSupplier(Supplier supplier) {
-        return null;
+    @PutMapping("/{supplierId}")
+    public void updateSupplier(
+            @PathVariable int supplierId,
+            @RequestBody Supplier supplier) {
+        supplier.setSupplierId(supplierId);
+        jpaService.updateSupplier(supplier);
     }
 
-    public ResponseEntity<Void> deleteSupplier(int supplierId) {
-        return null;
+    @DeleteMapping("/{supplierId}")
+    public void deleteSupplier(@PathVariable int supplierId) {
+        jpaService.deleteSupplier(supplierId);
     }
 
-    public ResponseEntity<List<Supplier>> getAllSuppliersFromArrayList() {
-        return null;
+    // ArrayList-based endpoints (Day-2 data exposure)
+
+    @GetMapping("/fromArrayList")
+    public List<Supplier> getAllSuppliersFromArrayList() {
+        return arrayListService.getAllSuppliers();
     }
 
-    public ResponseEntity<Integer> addSupplierToArrayList(Supplier supplier) {
-        return null;
+    @GetMapping("/fromArrayList/all")
+    public List<Supplier> getAllSuppliersSortedByNameFromArrayList() {
+        return arrayListService.getAllSuppliersSortedByName();
     }
 
-    public ResponseEntity<List<Supplier>> getAllSuppliersSortedByNameFromArrayList() {
-        return null;
+    @PostMapping("/toArrayList")
+    public int addSupplierToArrayList(@RequestBody Supplier supplier) {
+        return arrayListService.addSupplier(supplier);
     }
 }
