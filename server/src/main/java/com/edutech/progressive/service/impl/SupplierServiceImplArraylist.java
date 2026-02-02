@@ -1,31 +1,48 @@
 package com.edutech.progressive.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import com.edutech.progressive.dao.SupplierDAO;
 import com.edutech.progressive.entity.Supplier;
 import com.edutech.progressive.service.SupplierService;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class SupplierServiceImplArraylist implements SupplierService {
-    List<Supplier> supList = new ArrayList<>();
+
+    private static List<Supplier> supplierList = new ArrayList<>();
 
     @Override
     public List<Supplier> getAllSuppliers() {
-        return supList;
+        return supplierList;
     }
 
     @Override
     public int addSupplier(Supplier supplier) {
-        supList.add(supplier);
-        return supList.size();
+        supplierList.add(supplier);
+        return supplierList.size();
     }
 
     @Override
     public List<Supplier> getAllSuppliersSortedByName() {
-        Collections.sort(supList);
-        return supList;
+        List<Supplier> sortedList = new ArrayList<>(supplierList);
+        sortedList.sort(Comparator.comparing(Supplier::getSupplierName));
+        return sortedList;
     }
 
+    @Override
+    public void emptyArrayList() {
+        supplierList.clear();
+    }
+
+    // JDBC/JPA placeholders (not used here)
+    @Override
+    public void updateSupplier(Supplier supplier) {}
+
+    @Override
+    public void deleteSupplier(int supplierId) {}
+
+    @Override
+    public Supplier getSupplierById(int supplierId) {
+        return null;
+    }
 }
