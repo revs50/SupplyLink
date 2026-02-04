@@ -24,14 +24,15 @@ public class SupplierServiceImplArraylist implements SupplierService {
 
     @Override
     public List<Supplier> getAllSuppliersSortedByName() {
-        List<Supplier> sortedList = new ArrayList<>(supplierList);
-        sortedList.sort(Comparator.comparing(Supplier::getSupplierName));
-        return sortedList;
+        List<Supplier> sortedSupplier = supplierList;
+        sortedSupplier.sort(Comparator.comparing(Supplier::getSupplierName));
+        return sortedSupplier;
     }
 
     @Override
     public void emptyArrayList() {
         supplierList.clear();
+        //supplierList = new ArrayList<>();
     }
 
     // JDBC/JPA placeholders (not used here)
