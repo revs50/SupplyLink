@@ -1,98 +1,91 @@
-package com.wecp.progressive.controller;
+package com.edutech.progressive.controller;
 
-import com.wecp.progressive.entity.Supplier;
-import com.wecp.progressive.exception.SupplierAlreadyExistsException;
-import com.wecp.progressive.exception.SupplierDoesNotExistException;
-import com.wecp.progressive.service.impl.SupplierServiceImplArraylist;
-import com.wecp.progressive.service.impl.SupplierServiceImplJpa;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.edutech.progressive.entity.Supplier;
+import com.edutech.progressive.service.impl.SupplierServiceImplArraylist;
+import com.edutech.progressive.service.impl.SupplierServiceImplJpa;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/supplier")
 public class SupplierController {
 
-    @Autowired
-    SupplierServiceImplArraylist supplierServiceImplArraylist;
+    private final SupplierServiceImplJpa jpaService;
+    private final SupplierServiceImplArraylist arrayListService;
 
-    @Autowired
-    SupplierServiceImplJpa supplierServiceImplJpa;
+    public SupplierController(SupplierServiceImplJpa jpaService,
+                              SupplierServiceImplArraylist arrayListService) {
+        this.jpaService = jpaService;
+        this.arrayListService = arrayListService;
+    }
+
+    // ---------- JPA ENDPOINTS ----------
 
     @GetMapping
-    public ResponseEntity<List<Supplier>> getAllSuppliers() throws SQLException {
-        List<Supplier> suppliers = supplierServiceImplJpa.getAllSuppliers();
-        return new ResponseEntity<>(suppliers, HttpStatus.OK);
+    public ResponseEntity<List<Supplier>> getAllSuppliers() {
+        return ResponseEntity.ok(jpaService.getAllSuppliers());
     }
 
     @GetMapping("/{supplierId}")
-    public ResponseEntity<?> getSupplierById(@PathVariable int supplierId) throws SQLException {
-        try {
-            Supplier supplier = supplierServiceImplJpa.getSupplierById(supplierId);
-                return new ResponseEntity<>(supplier, HttpStatus.OK);
-        } catch (SupplierDoesNotExistException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            // Return a generic error message for any other exceptions
-            return new ResponseEntity<>("An unexpected error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Supplier> getSupplierById(@PathVariable int supplierId) {
+        Supplier supplier = jpaService.getSupplierById(supplierId);
+        if (supplier == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        return ResponseEntity.ok(supplier);
     }
 
     @PostMapping
-    public ResponseEntity<?> addSupplier(@RequestBody Supplier supplier) {
+    public ResponseEntity<Integer> addSupplier(@RequestBody Supplier supplier) {
         try {
-            int supplierId = supplierServiceImplJpa.addSupplier(supplier);
-            return new ResponseEntity<>(supplierId, HttpStatus.CREATED);
-        } catch (SupplierAlreadyExistsException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            int id = jpaService.addSupplier(supplier);
+            return ResponseEntity.status(HttpStatus.CREATED).body(id);
         } catch (Exception e) {
-            return new ResponseEntity<>("An unexpected error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @PutMapping("/{supplierId}")
-    public ResponseEntity<?> updateSupplier(@PathVariable int supplierId, @RequestBody Supplier supplier) {
+    public ResponseEntity<Void> updateSupplier(
+            @PathVariable int supplierId,
+            @RequestBody Supplier supplier) {
         try {
             supplier.setSupplierId(supplierId);
-            supplierServiceImplJpa.updateSupplier(supplier);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (SupplierAlreadyExistsException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            jpaService.updateSupplier(supplier);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return new ResponseEntity<>("An unexpected error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @DeleteMapping("/{supplierId}")
     public ResponseEntity<Void> deleteSupplier(@PathVariable int supplierId) {
         try {
-            supplierServiceImplJpa.deleteSupplier(supplierId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (SQLException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            jpaService.deleteSupplier(supplierId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/fromArrayList")
-    public ResponseEntity<List<Supplier>> getAllSuppliersFromArrayList() {
-        List<Supplier> suppliers = supplierServiceImplArraylist.getAllSuppliers();
-        return new ResponseEntity<>(suppliers, HttpStatus.OK);
-    }
+    // ---------- ARRAYLIST ENDPOINTS ----------
 
-    @PostMapping("/toArrayList")
-    public ResponseEntity<Integer> addSupplierToArrayList(@RequestBody Supplier supplier) {
-        int listSize = supplierServiceImplArraylist.addSupplier(supplier);
-        return new ResponseEntity<>(listSize, HttpStatus.CREATED);
-    }
+    // @GetMapping("/fromArrayList")
+    // public ResponseEntity<List<Supplier>> getAllSuppliersFromArrayList() {
+    //     return ResponseEntity.ok(arrayListService.getAllSuppliers());
+    // }
 
-    @GetMapping("/fromArrayList/all")
-    public ResponseEntity<List<Supplier>> getAllSuppliersSortedByNameFromArrayList() {
-        List<Supplier> supplierList = supplierServiceImplArraylist.getAllSuppliersSortedByName();
-        return new ResponseEntity<>(supplierList, HttpStatus.OK);
-    }
+    // @PostMapping("/toArrayList")
+    // public ResponseEntity<Integer> addSupplierToArrayList(@RequestBody Supplier supplier) {
+    //     int size = arrayListService.addSupplier(supplier);
+    //     return ResponseEntity.status(HttpStatus.CREATED).body(size);
+    // }
+
+    // @GetMapping("/fromArrayList/all")
+    // public ResponseEntity<List<Supplier>> getAllSuppliersSortedByNameFromArrayList() {
+    //     return ResponseEntity.ok(arrayListService.getAllSuppliersSortedByName());
+    // }
 }
