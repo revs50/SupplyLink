@@ -1,74 +1,56 @@
 package com.edutech.progressive.service.impl;
 
 import com.edutech.progressive.entity.Warehouse;
-import com.edutech.progressive.exception.NoWarehouseFoundForSupplierException;
-import com.edutech.progressive.repository.ProductRepository;
-import com.edutech.progressive.repository.ShipmentRepository;
-import com.edutech.progressive.repository.WarehouseRepository;
 import com.edutech.progressive.service.WarehouseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
-@Service
 public class WarehouseServiceImplJpa implements WarehouseService {
 
-    @Autowired
-    ProductRepository productRepository;
-
-    @Autowired
-    ShipmentRepository shipmentRepository;
-
-    private WarehouseRepository warehouseRepository;
-
-    @Autowired
-    public WarehouseServiceImplJpa(WarehouseRepository warehouseRepository) {
-        this.warehouseRepository = warehouseRepository;
+    @Override
+    public List<Warehouse> getAllWarehouses() {
+        return List.of();
     }
 
     @Override
-    public List<Warehouse> getAllWarehouses() throws SQLException {
-        return warehouseRepository.findAll();
+    public int addWarehouse(Warehouse warehouse) {
+        return -1;
     }
 
     @Override
-    public int addWarehouse(Warehouse warehouse) throws SQLException {
-        return warehouseRepository.save(warehouse).getWarehouseId();
+    public List<Warehouse> getWarehousesSortedByCapacity() {
+        return List.of();
     }
 
     @Override
-    public List<Warehouse> getWarehousesSortedByCapacity() throws SQLException {
-        List<Warehouse> sortedWarehouses = warehouseRepository.findAll();
-        Collections.sort(sortedWarehouses);
-        return sortedWarehouses;
+    public void updateWarehouse(Warehouse warehouse) {
+        // placeholder
     }
 
     @Override
-    public void updateWarehouse(Warehouse warehouse) throws SQLException {
-        warehouseRepository.save(warehouse);
+    public void deleteWarehouse(int warehouseId) {
+        // placeholder
     }
 
     @Override
-    public void deleteWarehouse(int warehouseId) throws SQLException {
-        shipmentRepository.deleteByWarehouseId(warehouseId);
-        productRepository.deleteByWarehouseId(warehouseId);
-        warehouseRepository.deleteById(warehouseId);
+    public Warehouse getWarehouseById(int warehouseId) {
+        return null;
     }
 
     @Override
-    public Warehouse getWarehouseById(int warehouseId) throws SQLException {
-        return warehouseRepository.findByWarehouseId(warehouseId);
+    public List<Warehouse> getWarehouseBySupplier(int supplierId) {
+        return null;
     }
 
     @Override
-    public List<Warehouse> getWarehouseBySupplier(int supplierId) throws NoWarehouseFoundForSupplierException {
-        List<Warehouse> warehouseList = warehouseRepository.findAllBySupplier_SupplierId(supplierId);
-        if (warehouseList.isEmpty()) {
-            throw new NoWarehouseFoundForSupplierException("No warehouse found with the given supplier Id");
-        }
-        return warehouseList;
+    public void emptyArrayList() {
+        // not applicable for JPA
+    }
+
+    @Override
+    public List<Warehouse> getWarehousesSortedByName() throws SQLException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getWarehousesSortedByName'");
     }
 }
