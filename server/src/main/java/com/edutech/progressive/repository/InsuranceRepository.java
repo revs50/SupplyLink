@@ -11,11 +11,11 @@ import org.springframework.stereotype.Repository;
 import com.edutech.progressive.entity.Insurance;
 
 @Repository
-public interface InsuranceRepository extends JpaRepository<Insurance, Integer> {
-    Insurance findByInsuranceId(int insuranceId);
+public interface InsuranceRepository {//extends JpaRepository<Insurance, Integer> {
+    // Insurance findByInsuranceId(int insuranceId);
 
-    @Modifying
-    @Transactional
-    @Query("delete from Insurance ins where ins.shipment.shipmentId = :shipmentId")
-    void deleteByShipmentId(@Param("shipmentId") int shipmentId);
+    // @Modifying
+    // @Transactional
+    // @Query("delete from Insurance ins where ins.shipment.shipmentId = :shipmentId")
+    // void deleteByShipmentId(@Param("shipmentId") int shipmentId);
 }

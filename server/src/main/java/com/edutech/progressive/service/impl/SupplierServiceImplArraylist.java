@@ -3,46 +3,50 @@ package com.edutech.progressive.service.impl;
 import com.edutech.progressive.entity.Supplier;
 import com.edutech.progressive.service.SupplierService;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class SupplierServiceImplArraylist implements SupplierService {
+import org.springframework.stereotype.Service;
+
+@Service
+public class SupplierServiceImplArraylist {//implements SupplierService {
 
     private static List<Supplier> supplierList = new ArrayList<>();
 
-    @Override
+    //@Override
     public List<Supplier> getAllSuppliers() {
         return supplierList;
     }
 
-    @Override
-    public int addSupplier(Supplier supplier) {
+    //@Override
+    public int addSupplier(Supplier supplier) throws SQLException {
         supplierList.add(supplier);
         return supplierList.size();
     }
 
-    @Override
+    //@Override
     public List<Supplier> getAllSuppliersSortedByName() {
-        List<Supplier> sortedSupplier = supplierList;
+        List<Supplier> sortedSupplier = new ArrayList<>(supplierList);
         sortedSupplier.sort(Comparator.comparing(Supplier::getSupplierName));
         return sortedSupplier;
     }
 
-    @Override
+    //@Override
     public void emptyArrayList() {
         supplierList.clear();
         //supplierList = new ArrayList<>();
     }
 
     // JDBC/JPA placeholders (not used here)
-    @Override
+    //@Override
     public void updateSupplier(Supplier supplier) {}
 
-    @Override
+    //@Override
     public void deleteSupplier(int supplierId) {}
 
-    @Override
+    //@Override
     public Supplier getSupplierById(int supplierId) {
         return null;
     }
